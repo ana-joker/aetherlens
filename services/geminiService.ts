@@ -2,15 +2,18 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import type { AspectRatio, Persona, EditableImage } from '../types';
 
-if (!process.env.API_KEY) {
-  // This key is for client-side calls that are still being made (e.g., enhance prompt).
-  // The backend for identity generation would have its own key, or preferably,
-  // ALL calls would go through a backend to hide the key.
-  // We leave this for the remaining direct calls.
-  console.warn("API_KEY environment variable not set for client-side operations.");
+// WARNING: It is NOT recommended to store API keys in client-side code.
+// This is for demonstration purposes only. In a real application, API keys
+// should be secured on a backend server or managed through a build process
+// with environment variables. Exposing keys in the browser can lead to misuse.
+const API_KEY = "AIzaSyBRo6rEfxNO_KDEnDjPvT7OjuUlx2w_j9c";
+
+if (!API_KEY) {
+  // This is a sanity check that will fail if the hardcoded key is removed.
+  console.error("API_KEY is missing. The application will not work without it.");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export const generateImages = async (
   prompt: string,
