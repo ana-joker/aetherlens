@@ -6,7 +6,7 @@ import type { AspectRatio, Persona, EditableImage } from '../types';
 // This is for demonstration purposes only. In a real application, API keys
 // should be secured on a backend server or managed through a build process
 // with environment variables. Exposing keys in the browser can lead to misuse.
-const API_KEY = "AIzaSyBRo6rEfxNO_KDEnDjPvT7OjuUlx2w_j9c";
+const API_KEY = "AIzaSyBjird_xybbPbNmyAS4ncbQ2mlKKjNHJVk";
 
 if (!API_KEY) {
   // This is a sanity check that will fail if the hardcoded key is removed.
