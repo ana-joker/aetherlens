@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { STYLE_CORES, ASPECT_RATIOS, CELESTIAL_NEON_BLUE_LIGHT, NEGATIVE_PRESETS, LOADING_TIPS, INSPIRATION_PROMPTS } from './constants';
 import type { AspectRatio, StyleCore, EditableImage } from './types';
@@ -308,107 +309,6 @@ const App: React.FC = () => {
         setMode('edit');
     };
 
-    const MainContent = () => {
-        switch (mode) {
-            case 'create':
-                return (
-                    <>
-                        <div className="space-y-4">
-                            <div className="relative">
-                               <textarea
-                                    value={prompt}
-                                    onChange={(e) => setPrompt(e.target.value)}
-                                    placeholder="Describe your vision... or get inspired..."
-                                    className="w-full p-4 pr-28 pb-14 bg-gray-800 border-2 border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 min-h-[120px] text-gray-200 placeholder-gray-500"
-                               />
-                               <button 
-                                    onClick={handleEnhancePrompt} 
-                                    disabled={anyLoading}
-                                    title="Use Prompt Alchemist"
-                                    className="absolute top-3 right-3 flex items-center space-x-2 bg-blue-700 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
-                                >
-                                    {isEnhancing ? <LoadingSpinner className="w-5 h-5"/> : <WandIcon className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
-                                    <span className="text-sm font-semibold hidden sm:inline">Alchemist</span>
-                               </button>
-                               <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                                    <button
-                                        onClick={handleRandomPrompt}
-                                        disabled={anyLoading}
-                                        title="Spark of Inspiration (Random Prompt)"
-                                        className="bg-gray-700/80 backdrop-blur-sm p-2 rounded-full hover:bg-gray-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
-                                    >
-                                        {isGeneratingRandomPrompt ? <LoadingSpinner className="w-5 h-5 text-white"/> : <DiceIcon className="w-5 h-5 text-gray-300 group-hover:text-white" />}
-                                    </button>
-                                    <button
-                                        onClick={triggerFileInput}
-                                        disabled={anyLoading}
-                                        title="Aether's Eye (Analyze Image)"
-                                        className="bg-gray-700/80 backdrop-blur-sm p-2 rounded-full hover:bg-gray-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
-                                    >
-                                        {isAnalyzingImage ? <LoadingSpinner className="w-5 h-5 text-white"/> : <EyeIcon className="w-5 h-5 text-gray-300 group-hover:text-white" />}
-                                    </button>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        onChange={handleImageFileChange}
-                                        className="hidden"
-                                        accept="image/png, image/jpeg, image/webp"
-                                    />
-                               </div>
-                            </div>
-                             <div className="space-y-2">
-                                <textarea
-                                    value={negativePrompt}
-                                    onChange={(e) => setNegativePrompt(e.target.value)}
-                                    placeholder="Negative prompt: what to avoid... (e.g., blurry, text, watermark)"
-                                    className="w-full p-3 bg-gray-800 border-2 border-gray-700 rounded-lg focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-300 min-h-[60px] text-gray-300 placeholder-gray-500 text-sm"
-                                />
-                                <div className="flex flex-wrap gap-2">
-                                    {NEGATIVE_PRESETS.map(preset => (
-                                        <Tooltip key={preset.name} text={`Adds: ${preset.value}`} className="block">
-                                            <button
-                                                onClick={() => applyNegativePreset(preset.value)}
-                                                className="text-xs font-semibold bg-gray-700 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600 hover:text-white transition-all"
-                                            >
-                                               + Avoid {preset.name}
-                                            </button>
-                                        </Tooltip>
-                                    ))}
-                                </div>
-                             </div>
-                        </div>
-                        
-                        <button 
-                            onClick={handleGenerate} 
-                            disabled={anyLoading}
-                            className="w-full mt-6 py-4 text-xl font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out disabled:bg-gray-600 disabled:cursor-wait flex items-center justify-center shadow-lg hover:shadow-blue-500/40 disabled:shadow-none"
-                            style={{ boxShadow: !isLoading ? `0 0 15px ${CELESTIAL_NEON_BLUE_LIGHT}` : 'none' }}
-                        >
-                            {isLoading ? <LoadingSpinner className="w-7 h-7 mr-3" /> : <SparklesIcon className="w-7 h-7 mr-3" />}
-                            {isLoading ? 'Synthesizing...' : 'Synthesize Aether'}
-                        </button>
-                        
-                       <ImageDisplay 
-                            isLoading={isLoading}
-                            error={error}
-                            generatedImages={generatedImages}
-                            numberOfImages={numberOfImages}
-                            handleGenerate={handleGenerate}
-                            onImageClick={setSelectedImage}
-                            onRefineAndUpscale={handleRefineAndUpscale}
-                            loadingTip={currentLoadingTip}
-                       />
-                    </>
-                );
-            case 'edit':
-                return <EditAndReimagine initialImages={imagesToEdit} onImageClick={setSelectedImage} />;
-            case 'identity':
-                return <IdentityStudio onImageClick={setSelectedImage} />;
-            default:
-                return null;
-        }
-    };
-
     return (
         <div className="min-h-screen bg-gray-900 text-gray-200 font-sans p-4 sm:p-6 lg:p-8">
             <header className="text-center mb-10">
@@ -449,7 +349,97 @@ const App: React.FC = () => {
                 
                 {/* Center Content */}
                 <div className="lg:col-span-6">
-                   <MainContent />
+                   {mode === 'create' && (
+                        <>
+                            <div className="space-y-4">
+                                <div className="relative">
+                                   <textarea
+                                        value={prompt}
+                                        onChange={(e) => setPrompt(e.target.value)}
+                                        placeholder="Describe your vision... or get inspired..."
+                                        className="w-full p-4 pr-28 pb-14 bg-gray-800 border-2 border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 min-h-[120px] text-gray-200 placeholder-gray-500"
+                                   />
+                                   <button 
+                                        onClick={handleEnhancePrompt} 
+                                        disabled={anyLoading}
+                                        title="Use Prompt Alchemist"
+                                        className="absolute top-3 right-3 flex items-center space-x-2 bg-blue-700 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
+                                    >
+                                        {isEnhancing ? <LoadingSpinner className="w-5 h-5"/> : <WandIcon className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
+                                        <span className="text-sm font-semibold hidden sm:inline">Alchemist</span>
+                                   </button>
+                                   <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                                        <button
+                                            onClick={handleRandomPrompt}
+                                            disabled={anyLoading}
+                                            title="Spark of Inspiration (Random Prompt)"
+                                            className="bg-gray-700/80 backdrop-blur-sm p-2 rounded-full hover:bg-gray-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
+                                        >
+                                            {isGeneratingRandomPrompt ? <LoadingSpinner className="w-5 h-5 text-white"/> : <DiceIcon className="w-5 h-5 text-gray-300 group-hover:text-white" />}
+                                        </button>
+                                        <button
+                                            onClick={triggerFileInput}
+                                            disabled={anyLoading}
+                                            title="Aether's Eye (Analyze Image)"
+                                            className="bg-gray-700/80 backdrop-blur-sm p-2 rounded-full hover:bg-gray-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed group"
+                                        >
+                                            {isAnalyzingImage ? <LoadingSpinner className="w-5 h-5 text-white"/> : <EyeIcon className="w-5 h-5 text-gray-300 group-hover:text-white" />}
+                                        </button>
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleImageFileChange}
+                                            className="hidden"
+                                            accept="image/png, image/jpeg, image/webp"
+                                        />
+                                   </div>
+                                </div>
+                                 <div className="space-y-2">
+                                    <textarea
+                                        value={negativePrompt}
+                                        onChange={(e) => setNegativePrompt(e.target.value)}
+                                        placeholder="Negative prompt: what to avoid... (e.g., blurry, text, watermark)"
+                                        className="w-full p-3 bg-gray-800 border-2 border-gray-700 rounded-lg focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-300 min-h-[60px] text-gray-300 placeholder-gray-500 text-sm"
+                                    />
+                                    <div className="flex flex-wrap gap-2">
+                                        {NEGATIVE_PRESETS.map(preset => (
+                                            <Tooltip key={preset.name} text={`Adds: ${preset.value}`} className="block">
+                                                <button
+                                                    onClick={() => applyNegativePreset(preset.value)}
+                                                    className="text-xs font-semibold bg-gray-700 text-gray-300 px-3 py-1 rounded-full hover:bg-gray-600 hover:text-white transition-all"
+                                                >
+                                                   + Avoid {preset.name}
+                                                </button>
+                                            </Tooltip>
+                                        ))}
+                                    </div>
+                                 </div>
+                            </div>
+                            
+                            <button 
+                                onClick={handleGenerate} 
+                                disabled={anyLoading}
+                                className="w-full mt-6 py-4 text-xl font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out disabled:bg-gray-600 disabled:cursor-wait flex items-center justify-center shadow-lg hover:shadow-blue-500/40 disabled:shadow-none"
+                                style={{ boxShadow: !isLoading ? `0 0 15px ${CELESTIAL_NEON_BLUE_LIGHT}` : 'none' }}
+                            >
+                                {isLoading ? <LoadingSpinner className="w-7 h-7 mr-3" /> : <SparklesIcon className="w-7 h-7 mr-3" />}
+                                {isLoading ? 'Synthesizing...' : 'Synthesize Aether'}
+                            </button>
+                            
+                           <ImageDisplay 
+                                isLoading={isLoading}
+                                error={error}
+                                generatedImages={generatedImages}
+                                numberOfImages={numberOfImages}
+                                handleGenerate={handleGenerate}
+                                onImageClick={setSelectedImage}
+                                onRefineAndUpscale={handleRefineAndUpscale}
+                                loadingTip={currentLoadingTip}
+                           />
+                        </>
+                    )}
+                    {mode === 'edit' && <EditAndReimagine initialImages={imagesToEdit} onImageClick={setSelectedImage} />}
+                    {mode === 'identity' && <IdentityStudio onImageClick={setSelectedImage} />}
                 </div>
 
                 {/* Right Panel - Only in Create Mode */}
